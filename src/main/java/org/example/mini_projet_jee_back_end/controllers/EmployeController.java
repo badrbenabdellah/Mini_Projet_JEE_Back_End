@@ -182,5 +182,35 @@ public class EmployeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("api/v1/auth/employe")
+    public ResponseEntity<Map<String, Object>> getEmployeByEmail(HttpServletRequest request) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> body = new HashMap<>();
+        body.put("email", request.getParameter("email"));
+        body.put("password", request.getParameter("password"));
+        if (!body.containsKey("email") || !body.containsKey("password")) {
+            response.put("code", -1);
+            response.put("data", null);
+            response.put("message", "Email et/ou mot de passe manquant");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        Employe employe = employeService.getEmployeByEmail(body.get("email"));
+        if (employe == null) {
+            response.put("code", -1);
+            response.put("data", null);
+            response.put("message", "Employé non trouvé");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        if (!passwordEncoder.matches(body.get("password"), employe.getPassword())) {
+            response.put("code", -1);
+            response.put("data", null);
+            response.put("message", "Password or email incorrect");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        response.put("code", 1);
+        response.put("data", employe);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
 
 }

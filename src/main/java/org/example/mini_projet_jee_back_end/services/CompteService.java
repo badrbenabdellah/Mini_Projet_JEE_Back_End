@@ -37,7 +37,7 @@ public class CompteService {
         return compteRepository.findAll();
     }
 
-    public Compte getCompteByClient(Client client) {
+    public List<Compte> getCompteByClient(Client client) {
         return compteRepository.findCompteByClient(client);
     }
 

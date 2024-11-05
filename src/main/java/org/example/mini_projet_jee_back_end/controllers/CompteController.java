@@ -96,19 +96,41 @@ public class CompteController {
         Map<String, Object> response = new HashMap<>();
         List<Compte> comptes = compteService.getAllComptes();
 
-        if(comptes.isEmpty()){
+        if (comptes.isEmpty()) {
             response.put("code", -1);
             response.put("data", null);
             response.put("message", "No compte found");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
+        // Calcul des métadonnées
+        int totalAccounts = comptes.size();
+        int newAccounts = (int) comptes.stream()
+                .filter(compte -> isNewAccount(compte.getDateCreation())) // Méthode à définir
+                .count();
+        double totalBalance = comptes.stream()
+                .mapToDouble(Compte::getSolde) // Supposons que getBalance() retourne le solde du compte
+                .sum();
+
+        // Ajout des métadonnées à la réponse
         response.put("code", 1);
         response.put("data", comptes);
         response.put("message", "List of comptes");
+        response.put("metadata", Map.of(
+                "totalAccounts", totalAccounts,
+                "newAccounts", newAccounts,
+                "totalBalance", totalBalance
+        ));
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    // Méthode pour vérifier si un compte est nouveau (créé ce mois-ci)
+    private boolean isNewAccount(LocalDate creationDate) {
+        LocalDate now = LocalDate.now();
+        return creationDate.getYear() == now.getYear() && creationDate.getMonth() == now.getMonth();
+    }
+
 
     @GetMapping("/api/v1/compte/{id}")
     public ResponseEntity<Map<String, Object>> getCompteById(@PathVariable Long id) {
@@ -172,6 +194,43 @@ public class CompteController {
         response.put("code", 1);
         response.put("data", updatedCompte);
         response.put("message", "Compte updated successfully");
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/api/v1/compte/client/{id}")
+    public ResponseEntity<Map<String, Object>> getComptesByClient(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        Client client = clientService.getClientById(id);
+
+        List<Compte> comptes = compteService.getCompteByClient(client);
+
+        if (comptes.isEmpty()) {
+            response.put("code", -1);
+            response.put("data", null);
+            response.put("message", "No compte found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
+        // Calcul des métadonnées
+//        int totalAccounts = comptes.size();
+//        int newAccounts = (int) comptes.stream()
+//                .filter(compte -> isNewAccount(compte.getDateCreation())) // Méthode à définir
+//                .count();
+//        double totalBalance = comptes.stream()
+//                .mapToDouble(Compte::getSolde) // Supposons que getBalance() retourne le solde du compte
+//                .sum();
+
+        // Ajout des métadonnées à la réponse
+        response.put("code", 1);
+        response.put("data", comptes);
+        response.put("message", "List of comptes");
+        /*response.put("metadata", Map.of(
+                "totalAccounts", totalAccounts,
+                "newAccounts", newAccounts,
+                "totalBalance", totalBalance
+        ));*/
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

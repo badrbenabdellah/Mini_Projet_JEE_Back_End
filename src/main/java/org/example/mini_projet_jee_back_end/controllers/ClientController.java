@@ -247,10 +247,21 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        existingClient.setFullname(client.getFullname());
-        existingClient.setEmail(client.getEmail());
-        existingClient.setPhone(client.getPhone());
-        existingClient.setAddress(client.getAddress());
+        // Vérifiez chaque champ avant de mettre à jour
+        if (client.getFullname() != null) {
+            existingClient.setFullname(client.getFullname());
+        }
+        if (client.getEmail() != null) {
+            existingClient.setEmail(client.getEmail());
+        }
+        if (client.getPhone() != null) {
+            existingClient.setPhone(client.getPhone());
+        }
+        if (client.getAddress() != null) {
+            existingClient.setAddress(client.getAddress());
+        }
+
+        existingClient.setJoinDate(existingClient.getJoinDate());
 
         Client updatedClient = clientService.saveClient(existingClient);
 
@@ -260,6 +271,7 @@ public class ClientController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
 
     @GetMapping("/api/v1/client/limit")
     public ResponseEntity<Map<String, Object>> getClientByLimit(HttpServletRequest request) {

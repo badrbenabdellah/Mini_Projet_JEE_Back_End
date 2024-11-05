@@ -40,4 +40,8 @@ public class OperationService {
     public int countAllOperationsByDate(LocalDate dateOperation) {
         return operationRepository.countAllByDateOperation(dateOperation);
     }
+
+    public List<Operation> getOperationsByType(Class<? extends Operation> type) {
+        return operationRepository.findByType(type);
+    }
 }

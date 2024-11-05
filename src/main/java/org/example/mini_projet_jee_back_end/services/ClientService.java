@@ -54,5 +54,4 @@ public class ClientService {
 
         return clientRepository.countByJoinDateBetween(startDate, endDate);
     }
-
 }

@@ -36,4 +36,9 @@ public class EmployeService {
         return employeRepository.findAll();
     }
 
+    public Employe getEmployeByEmail(String email) {
+        return employeRepository.findEmployeByEmail(email);
+    }
+
+
 }
