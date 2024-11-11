@@ -1,7 +1,7 @@
 # mini_projet_jee_back_end
 
 ## How to Use
-first create a new employee using the api endpoint `/api/employee` with the following body using a POST request with Postman or any other API testing tool:
+first create a new employee using the api endpoint `/api/v1/employe` with the following body using a POST request with Postman or any other API testing tool:
 ```json
 {
   "name": "John Doe",
