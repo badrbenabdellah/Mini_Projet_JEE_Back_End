@@ -32,20 +32,20 @@ public class EmployeController {
     @PostMapping("/api/v1/employe")
     public ResponseEntity<Map<String, Object>> saveEmploye(HttpServletRequest request, @RequestBody Employe employe) {
         Map<String, Object> response = new HashMap<>();
-        Long employe_sub_id = request.getParameter("employe_sub_id") != null ? Long.parseLong(request.getParameter("employe_sub_id")) : null;
+        Long employe_sup_id = request.getParameter("employe_sup_id") != null ? Long.parseLong(request.getParameter("employe_sup_id")) : null;
         Long groupe_id = request.getParameter("groupe_id") != null ? Long.parseLong(request.getParameter("groupe_id")) : null;
         employe.setJoinDate(LocalDate.now());
         String hashedPassword = passwordEncoder.encode(employe.getPassword());
         employe.setPassword(hashedPassword);
-        if (employe_sub_id != null) {
-            Employe employe_sub = employeService.getEmployeById(employe_sub_id);
-            if (employe_sub == null) {
+        if (employe_sup_id != null) {
+            Employe employe_sup = employeService.getEmployeById(employe_sup_id);
+            if (employe_sup == null) {
                 response.put("code", -1);
                 response.put("data", null);
-                response.put("message", "Employé subordonné non trouvé");
+                response.put("message", "Employé sup non trouvé");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
             }
-            employe.setEmploye_sup(employe_sub);
+            employe.setEmploye_sup(employe_sup);
         }
         if (groupe_id != null) {
             Groupe groupe = groupeService.getGroupeById(groupe_id);
@@ -102,8 +102,8 @@ public class EmployeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/api/v1/employe/{id}/subordonnees")
-    public ResponseEntity<Map<String, Object>> getSubordonnees(@PathVariable Long id) {
+    @GetMapping("/api/v1/employe/{id}/collaborators")
+    public ResponseEntity<Map<String, Object>> getCollaboratorData(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         Employe employe = employeService.getEmployeById(id);
 
@@ -114,21 +114,28 @@ public class EmployeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        List<Map<String, Object>> subordonneesData = new ArrayList<>();
-        for (Employe subordonne : employe.getEmployes()) {
-            Map<String, Object> subordonneInfo = new HashMap<>();
-            subordonneInfo.put("id", subordonne.getCodeEmploye());
-            subordonneInfo.put("fullname", subordonne.getFullname());
-            subordonneInfo.put("email", subordonne.getEmail());
-            subordonneInfo.put("phone", subordonne.getPhone());
-            subordonneInfo.put("address", subordonne.getAddress());
-            subordonneInfo.put("role", subordonne.getRole());
-            subordonneesData.add(subordonneInfo);
+        List<Map<String, Object>> collaboratorData = new ArrayList<>();
+        for (Employe collaborator : employe.getEmployes()) {
+            Map<String, Object> collaboratorsInfo = new HashMap<>();
+            collaboratorsInfo.put("id", collaborator.getCodeEmploye());
+            collaboratorsInfo.put("fullname", collaborator.getFullname());
+            collaboratorsInfo.put("email", collaborator.getEmail());
+            collaboratorsInfo.put("phone", collaborator.getPhone());
+            collaboratorsInfo.put("address", collaborator.getAddress());
+            collaboratorsInfo.put("role", collaborator.getRole());
+            collaboratorData.add(collaboratorsInfo);
+        }
+
+        if(collaboratorData.isEmpty()) {
+            response.put("code", -1);
+            response.put("data", collaboratorData);
+            response.put("message", "Aucun collaborateur trouvé");
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }
 
         response.put("code", 1);
-        response.put("data", subordonneesData);
-        response.put("message", subordonneesData.isEmpty() ? "Aucun subordonné trouvé" : "Liste des subordonnés");
+        response.put("data", collaboratorData);
+        response.put("message", "Liste des collaborateurs");
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 

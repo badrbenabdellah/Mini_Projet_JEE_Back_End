@@ -83,4 +83,20 @@ public class GroupeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // get all employes in a groupe
+    @GetMapping("/api/v1/groupe/{id}/employes")
+    public ResponseEntity<Map<String, Object>> getEmployesByGroupeId(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        Groupe groupe = groupeService.getGroupeById(id);
+        if (groupe == null) {
+            response.put("code", -1);
+            response.put("data", null);
+            response.put("message", "Groupe non trouvé");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+        response.put("code", 1);
+        response.put("data", groupe.getEmployes());
+        response.put("message", "Liste des employés du groupe");
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
