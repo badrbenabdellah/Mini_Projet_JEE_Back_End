@@ -213,24 +213,10 @@ public class CompteController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
-        // Calcul des métadonnées
-//        int totalAccounts = comptes.size();
-//        int newAccounts = (int) comptes.stream()
-//                .filter(compte -> isNewAccount(compte.getDateCreation())) // Méthode à définir
-//                .count();
-//        double totalBalance = comptes.stream()
-//                .mapToDouble(Compte::getSolde) // Supposons que getBalance() retourne le solde du compte
-//                .sum();
-
         // Ajout des métadonnées à la réponse
         response.put("code", 1);
         response.put("data", comptes);
         response.put("message", "List of comptes");
-        /*response.put("metadata", Map.of(
-                "totalAccounts", totalAccounts,
-                "newAccounts", newAccounts,
-                "totalBalance", totalBalance
-        ));*/
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

@@ -49,23 +49,6 @@ public class ClientController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        /*try {
-            if (request.getParameter("decouvert") != null) {
-                decouvert = Double.parseDouble(request.getParameter("decouvert"));
-            }
-            if (request.getParameter("taux") != null) {
-                taux = Double.parseDouble(request.getParameter("taux"));
-            }
-            if(request.getParameter("solde") != null){
-                solde = Double.parseDouble(request.getParameter("solde"));
-            }
-        } catch (NumberFormatException e) {
-            response.put("code", -1);
-            response.put("data", null);
-            response.put("message", "Invalid parameter format for 'decouvert' or 'taux'");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }*/
-
         // Sauvegarde du client
         Client newClient = clientService.saveClient(client);
         if (newClient == null) {
@@ -111,31 +94,6 @@ public class ClientController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
-    /*@GetMapping("/api/v1/client")
-    public ResponseEntity<Map<String, Object>> getClients(HttpServletRequest request) {
-        Map<String, Object> response = new HashMap<>();
-        int limit = request.getParameter("limit") != null ? Integer.parseInt(request.getParameter("limit")) : 0;
-        List<Client> clients;
-        if(limit == 0){
-            clients = clientService.getAllClients();
-        }else{
-            clients = clientService.getClientByLimit(limit);
-        }
-
-        if (clients.isEmpty()) {
-            response.put("code", -1);
-            response.put("data", null);
-            response.put("message", "No clients found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-
-        response.put("code", 1);
-        response.put("data", clients);
-        response.put("message", "Clients found");
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
-    }*/
 
     @GetMapping("/api/v1/client")
     public ResponseEntity<Map<String, Object>> getClients(HttpServletRequest request) {
